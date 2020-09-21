@@ -1,0 +1,9 @@
+# mariadb
+mariadb_version: 10.3
+init_databases:
+  - spider
+db_root_password: "Admin@123"
+db_init_sql:
+  - CREATE USER IF NOT EXISTS 'spider'@'%' IDENTIFIED BY 'Spider@123'
+  - GRANT ALL ON *.* TO 'spider'@'%'
+  - FLUSH PRIVILEGES

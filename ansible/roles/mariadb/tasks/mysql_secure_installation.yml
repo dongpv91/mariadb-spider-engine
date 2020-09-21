@@ -1,0 +1,47 @@
+---
+# Set root password
+# UPDATE mysql.user SET Password=PASSWORD('mysecret') WHERE User='root';
+# FLUSH PRIVILEGES;
+
+- name: initial set root password
+  mysql_user: name=root password={{ db_root_password }} state=present
+  ignore_errors: True
+
+- name: Set root Password
+  mysql_user: login_user=root login_password={{ db_root_password }} name=root host={{ item }} password={{ db_root_password }}
+  with_items:
+    - 192.168.66.%
+    - localhost
+    - 127.0.0.1
+    - ::1
+
+- name: Reload privilege tables
+  command: 'mysql -uroot -p{{ db_root_password }} -e "{{ item }}"'
+  with_items:
+    - FLUSH PRIVILEGES
+  changed_when: False
+
+- name: Remove anonymous users
+  command: 'mysql -uroot -p{{ db_root_password }} -e "{{ item }}"'
+  with_items:
+    - DELETE FROM mysql.user WHERE User=''
+  changed_when: False
+
+- name: Remove test database and access to it
+  command: 'mysql -uroot -p{{ db_root_password }} -e "{{ item }}"'
+  with_items:
+    - DROP DATABASE IF EXISTS test
+    - DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'
+  changed_when: False
+  ignore_errors: True
+
+- name: Create database
+  command: 'mysql -uroot -p{{ db_root_password }} -e "CREATE DATABASE IF NOT EXISTS {{ item }} DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"'
+  with_items: "{{ init_databases }}"
+  changed_when: False
+
+- name: Create user
+  command: 'mysql -uroot -p{{ db_root_password }} -e "{{ item }}"'
+  with_items: "{{ db_init_sql }}"
+  changed_when: False
+

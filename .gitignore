@@ -1,0 +1,7 @@
+
+/ansible/*.retry
+/ansible/test-site.*
+
+.vagrant/
+.idea/
+id_rsa

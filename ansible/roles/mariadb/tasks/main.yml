@@ -1,0 +1,27 @@
+---
+- name: Add repo file
+  template: src=mariadb.repo.j2 dest=/etc/yum.repos.d/mariadb.repo owner=root group=root mode=0644
+
+- name: Install MariaDB
+  yum: name={{ item }} enablerepo=mariadb state=present
+  with_items:
+    - MariaDB-server
+    - MariaDB-client
+
+- name: Install MySQLdb Python package for secure installations.
+  yum: name=MySQL-python state=present
+
+
+- name: systemd daemon reload
+  shell: systemctl daemon-reload
+
+- name: Start and enable service
+  service: name=mysql state=started enabled=yes
+
+- name: Restart MariaDB
+  service: name=mysql state=restarted
+
+- name: mysql_secure_installation
+  include: mysql_secure_installation.yml
+
+

@@ -1,0 +1,14 @@
+[spider-node]
+192.168.66.10
+
+[dn-mysql]
+192.168.66.11
+192.168.66.12
+
+[dn-mariadb]
+192.168.66.13
+
+
+[data-note:children]
+dn-mysql
+dn-mariadb

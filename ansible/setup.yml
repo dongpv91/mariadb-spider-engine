@@ -1,0 +1,12 @@
+- hosts:
+    - spider-node
+    - dn-mariadb
+  become: yes
+  roles:
+    - mariadb
+
+- hosts:
+    - dn-mysql
+  become: yes
+  roles:
+    - mysql
